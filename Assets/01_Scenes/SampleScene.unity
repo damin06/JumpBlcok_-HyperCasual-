@@ -1043,6 +1043,8 @@ GameObject:
   - component: {fileID: 1552725524}
   - component: {fileID: 1552725523}
   - component: {fileID: 1552725522}
+  - component: {fileID: 1552725527}
+  - component: {fileID: 1552725526}
   m_Layer: 0
   m_Name: Plyaer
   m_TagString: Untagged
@@ -1138,6 +1140,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1552725526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1552725521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b946df9eadd8a14d89073be3669ce33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_jumpPower: 0
+  m_jumpSpeed: 2
+  P1: {x: 0, y: 4.5, z: 0}
+  P2: {x: 0, y: 10, z: 0}
+  P3: {x: 12, y: 10, z: 0}
+  P4: {x: 12, y: 4.5, z: 0}
+--- !u!54 &1552725527
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1552725521}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 32
+  m_CollisionDetection: 0
 --- !u!1 &1669638368
 GameObject:
   m_ObjectHideFlags: 0
