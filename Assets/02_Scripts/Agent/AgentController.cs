@@ -18,6 +18,7 @@ public class AgentController : MonoBehaviour
     [Space]
 
     [Header("Agent Setting")]
+    [SerializeField] private float m_jumpInputAccel = 3f;
     [SerializeField] private float m_jumpSpeed = 2f;
     [SerializeField] private float m_maxJumpPower = 5f;
     [SerializeField] private AnimationCurve m_animationCurve;
@@ -48,18 +49,35 @@ public class AgentController : MonoBehaviour
 
     private void AgentInput()
     {
-        if (Input.touchCount > 0)
+        if(Application.platform == RuntimePlatform.Android)
         {
-            Touch touch = Input.GetTouch(0);
-            if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
-                return;
-
-            JumpPower += Time.deltaTime;
-
-            if (touch.phase == TouchPhase.Ended)
+            if (Input.touchCount > 0)
             {
+                Touch touch = Input.GetTouch(0);
+                if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+                    return;
+
+                JumpPower += Time.deltaTime * m_jumpInputAccel;
+
+                if (touch.phase == TouchPhase.Ended)
+                {
+                    Vector3 dir = BlockManager.Instance.m_curDir == BlockDir.Right ? Vector3.right : Vector3.forward;
+                    JumpRb(dir, JumpPower);
+                    JumpPower = 0;
+                }
+            }
+        }
+        else
+        {
+            if(Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject()) 
+            {
+                JumpPower += Time.deltaTime * m_jumpInputAccel;
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                Debug.Log($"jumpePower : {JumpPower}");
                 Vector3 dir = BlockManager.Instance.m_curDir == BlockDir.Right ? Vector3.right : Vector3.forward;
-                Jump(dir, JumpPower);
+                JumpRb(dir, JumpPower);
                 JumpPower = 0;
             }
         }
@@ -68,11 +86,18 @@ public class AgentController : MonoBehaviour
     [ContextMenu("Jump Right")]
     public void JumpeTest()
     {
-        //m_rb.AddForce(new Vector3(1, 1f, 0) * 12, ForceMode.Impulse);
-        StartCoroutine(Jump(Vector3.right, 10f));
+        JumpRb(Vector3.right, 10);
+        //StartCoroutine(Jump(Vector3.right, 10f));
     }
 
-    private IEnumerator Jump(Vector3 dir, float distance)
+    private void JumpRb(Vector3 dir, float power)
+    {
+        dir.y = 1.5f;
+        //m_rb.velocity = dir * power;
+        m_rb.AddForce(dir * power, ForceMode.Impulse);
+    }
+
+    private IEnumerator JumpBazier(Vector3 dir, float distance)
     {
         float time = 0f;
         float value = 0f;

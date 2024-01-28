@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class BlockMono : PoolableMono
+public abstract class BlockMono : PoolableMono
 {
     private void OnEnable()
     {
@@ -12,14 +12,14 @@ public class BlockMono : PoolableMono
 
     public override void Reset() 
     {
-        Vector3 pos = transform.position;
-        pos.y = -5;
-        transform.position = pos;
+        
     }
 
-    public void SetBlockPos(Vector3 pos)
+    public void SetBlockPosAndScale(Vector3 pos, Vector3 scale)
     {
+        pos.y = -5;
         transform.position = pos;
+        transform.localScale = scale;
         Showblock();
     }
 
@@ -38,5 +38,10 @@ public class BlockMono : PoolableMono
     public void GotoPool()
     {
         PoolManager.Instance.Push(this);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        BlockManager.Instance.SapwnNextBlock();
     }
 }
