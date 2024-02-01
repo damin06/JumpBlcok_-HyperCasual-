@@ -20,11 +20,13 @@ public class AgentController : MonoBehaviour
     [Header("Agent Setting")]
     [SerializeField] private float m_jumpInputAccel = 3f;
     [SerializeField] private float m_jumpSpeed = 2f;
+    [SerializeField] private float m_minJumpPower = 3f;
     [SerializeField] private float m_maxJumpPower = 5f;
     [SerializeField] private AnimationCurve m_animationCurve;
+    [SerializeField] private bool m_DevMode =false;
 
 
-    private bool isGround = false;
+    private bool isGround => m_rb.velocity.magnitude <= 0;
     private Rigidbody m_rb;
     private float m_jumpPower;
 
@@ -49,6 +51,9 @@ public class AgentController : MonoBehaviour
 
     private void AgentInput()
     {
+        if (!isGround)
+            return;
+
         if(Application.platform == RuntimePlatform.Android)
         {
             if (Input.touchCount > 0)
@@ -77,8 +82,14 @@ public class AgentController : MonoBehaviour
             {
                 Debug.Log($"jumpePower : {JumpPower}");
                 Vector3 dir = BlockManager.Instance.m_curDir == BlockDir.Right ? Vector3.right : Vector3.forward;
-                JumpRb(dir, JumpPower);
-                JumpPower = 0;
+                //JumpRb(dir, JumpPower);
+                if (m_DevMode)
+                {
+                    StartCoroutine(JumpBazier(dir, PlayerPrefs.GetFloat("distance")));
+                    return;
+                }
+                StartCoroutine(JumpBazier(dir, JumpPower));
+                JumpPower = m_minJumpPower;
             }
         }
     }

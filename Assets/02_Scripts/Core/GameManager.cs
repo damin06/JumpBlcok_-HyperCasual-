@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     [SerializeField] private PollingListSO _poolingList;
-    private int Score = 0;
+    private float Score = 0;
 
     private void Awake()
     {
@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
         Score += score;
     }
 
-    public int GetScore()
+    public float GetScore()
     {
         return Score;
     }

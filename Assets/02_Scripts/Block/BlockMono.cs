@@ -5,6 +5,8 @@ using DG.Tweening;
 
 public abstract class BlockMono : PoolableMono
 {
+    private bool m_IsTouched = false;
+
     private void OnEnable()
     {
         Reset();
@@ -12,7 +14,7 @@ public abstract class BlockMono : PoolableMono
 
     public override void Reset() 
     {
-        
+        m_IsTouched = false;
     }
 
     public void SetBlockPosAndScale(Vector3 pos, Vector3 scale)
@@ -32,7 +34,7 @@ public abstract class BlockMono : PoolableMono
     [ContextMenu("HideBlock")]
     public void HideBlock()
     {
-        transform.DOMoveY(-5, 1.2f).SetEase(Ease.InCubic).onComplete = GotoPool;
+        transform.DOMoveY(-16, 1.2f).SetEase(Ease.InCubic).onComplete = GotoPool;
     }
 
     public void GotoPool()
@@ -42,6 +44,12 @@ public abstract class BlockMono : PoolableMono
 
     private void OnCollisionEnter(Collision collision)
     {
+        if(m_IsTouched) 
+            return;
+
+        Debug.Log(transform.InverseTransformPoint(collision.transform.position));
+
         BlockManager.Instance.SapwnNextBlock();
+
     }
 }

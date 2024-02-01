@@ -25,6 +25,11 @@ public class BlockManager : MonoBehaviour
     [Tooltip("Maximum number of blocks to spawn")]
     [SerializeField] private int m_blockCount = 3;
 
+    [Space]
+
+    [Header("Reference")]
+    [SerializeField] private Transform m_cam;
+
 
     private void Awake()
     {
@@ -41,20 +46,18 @@ public class BlockManager : MonoBehaviour
         
     }
 
-    public void SpanwBlock(Vector3 pos = default, BlockType blockType = BlockType.Normal)
+    private void SpanwBlock(Vector3 pos = default, BlockType blockType = BlockType.Normal)
     {
         if(m_blocks.Count > m_blockCount)
         {
-            while(m_blocks.Count > m_blockCount)
-            {
                 BlockMono block = m_blocks.Dequeue();
                 block.HideBlock();
-            }
         }
 
         string blockName = "NormalBlock";
         Vector3 newPos = pos;
-        Vector3 newSize = new Vector3(3.65f, 8, 3.65f);
+        Vector3 newSize = new Vector3(3.65f, 16, 3.65f);
+        //Vector3 curPos = Vector3.zero;
 
         switch (blockType)
         {
@@ -75,7 +78,7 @@ public class BlockManager : MonoBehaviour
             float minSize = Mathf.Clamp(3.65f - (GameManager.Instance.GetScore() / 10),1f, 3.65f);
 
             float totalSize = Random.Range(minSize, maxSize);
-            newSize = new Vector3(totalSize, 8f, totalSize);
+            newSize = new Vector3(totalSize, 16f, totalSize);
         }
 
         if(newPos == default && m_currentBlock != null)
@@ -92,6 +95,26 @@ public class BlockManager : MonoBehaviour
             newPos = curPos;
         }
 
+        if(m_currentBlock != null)
+        {
+            Vector3 curPos = m_currentBlock.transform.position;
+            Vector3 campPos = Vector3.Lerp(curPos, newPos, 0.5f);
+            campPos.y = 6;
+            m_cam.transform.position = campPos;
+
+            if (m_curDir == BlockDir.Right)
+                PlayerPrefs.SetFloat("distance", newPos.x - curPos.x);
+            else
+                PlayerPrefs.SetFloat("distance", newPos.z - curPos.z);
+        }
+        else
+        {
+            if (m_curDir == BlockDir.Right)
+                PlayerPrefs.SetFloat("distance", newPos.x);
+            else
+                PlayerPrefs.SetFloat("distance", newPos.z);
+        }
+
         m_currentBlock = PoolManager.Instance.Pop(blockName) as BlockMono;
 
         m_currentBlock.SetBlockPosAndScale(newPos, newSize);
@@ -101,7 +124,7 @@ public class BlockManager : MonoBehaviour
 
     public void SapwnNextBlock()
     {
-        //m_curDir = (BlockDir)Random.Range(0, 2);
+        m_curDir = (BlockDir)Random.Range(0, 2);
         SpanwBlock();
     }
 }
