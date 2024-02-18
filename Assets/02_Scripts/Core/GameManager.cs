@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private PollingListSO _poolingList;
     private float Score = 0;
+    public Color _color { private set; get; }
 
     private void Awake()
     {
