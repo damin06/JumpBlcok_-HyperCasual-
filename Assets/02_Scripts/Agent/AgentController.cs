@@ -126,10 +126,10 @@ public class AgentController : MonoBehaviour
             time = Mathf.Clamp(time + Time.deltaTime, 0, 1);
             //value = m_animationCurve.Evaluate(time);
             value = easeOutCirc(time);
-            Debug.Log(value);
+            //Debug.Log(value);
             yield return null;
         }
-        Debug.Log("break");
+        //Debug.Log("break");
     }
 
     private float easeOutCirc(float value) => (Mathf.Sqrt(1 - Mathf.Pow(value-1, 2)));

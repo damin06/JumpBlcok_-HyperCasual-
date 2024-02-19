@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    public UnityEvent<int> OnChangedScore;
+    private int Score = 0;
+
     [SerializeField] private PollingListSO _poolingList;
-    private float Score = 0;
     public Color _color { private set; get; }
 
     private void Awake()
@@ -30,7 +33,13 @@ public class GameManager : MonoBehaviour
 
     public void PlusScore(int score = 1)
     {
-        Score += score;
+        ModifySocre(Score + score);
+    }
+
+    private void ModifySocre(int socre)
+    {
+        Score = socre;
+        OnChangedScore.Invoke(Score);
     }
 
     public float GetScore()

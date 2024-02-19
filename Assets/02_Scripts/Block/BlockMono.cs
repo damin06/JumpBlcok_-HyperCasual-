@@ -47,9 +47,10 @@ public abstract class BlockMono : PoolableMono
         if(m_IsTouched) 
             return;
 
+        m_IsTouched = true;
         Debug.Log(transform.InverseTransformPoint(collision.transform.position));
 
         BlockManager.Instance.SapwnNextBlock();
-
+        GameManager.Instance.PlusScore();
     }
 }

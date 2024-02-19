@@ -41,11 +41,6 @@ public class BlockManager : MonoBehaviour
         SpanwBlock(Vector3.zero, BlockType.Normal);
     }
 
-    void Update()
-    {
-        
-    }
-
     private void SpanwBlock(Vector3 pos = default, BlockType blockType = BlockType.Normal)
     {
         if(m_blocks.Count > m_blockCount)
@@ -72,16 +67,21 @@ public class BlockManager : MonoBehaviour
                 break;
         }
 
-        if(m_currentBlock != null)
+
+#region Size
+        if (m_currentBlock != null)
         {
-            float maxSize = Mathf.Clamp(3.65f - (GameManager.Instance.GetScore() / 100),1f, 3.65f);
-            float minSize = Mathf.Clamp(3.65f - (GameManager.Instance.GetScore() / 10),1f, 3.65f);
+            float maxSize = Mathf.Clamp(3.65f - (GameManager.Instance.GetScore() / 120),1f, 3.65f);
+            float minSize = Mathf.Clamp(3.65f - (GameManager.Instance.GetScore() / 70),1f, 3.65f);
 
             float totalSize = Random.Range(minSize, maxSize);
             newSize = new Vector3(totalSize, 16f, totalSize);
         }
+#endregion
 
-        if(newPos == default && m_currentBlock != null)
+
+ #region Position
+        if (newPos == default && m_currentBlock != null)
         {
             Vector3 curPos = m_currentBlock.transform.position;
             if(m_curDir == BlockDir.Right)
@@ -94,8 +94,10 @@ public class BlockManager : MonoBehaviour
             }
             newPos = curPos;
         }
+#endregion
 
-        if(m_currentBlock != null)
+
+        if (m_currentBlock != null)
         {
             Vector3 curPos = m_currentBlock.transform.position;
             Vector3 campPos = Vector3.Lerp(curPos, newPos, 0.5f);
