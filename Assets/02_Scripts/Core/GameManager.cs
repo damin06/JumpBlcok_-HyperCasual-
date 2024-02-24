@@ -2,16 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using DG.Tweening;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
     public UnityEvent<int> OnChangedScore;
-    private int Score = 0;
 
-    [SerializeField] private PollingListSO _poolingList;
+    private int Score = 0;
     public Color _color { private set; get; }
+
+    [Header("Pool")]
+    [SerializeField] private PollingListSO _poolingList;
+
+    [Space]
+
+    [Header("Reference")]
+    [SerializeField] private Image _gameOverPanel;
 
     private void Awake()
     {
@@ -31,6 +40,13 @@ public class GameManager : MonoBehaviour
         _poolingList.lis.ForEach(p => PoolManager.Instance.CreatePool(p.prefab, p.poolCount));
     }
 
+#region Score
+
+    public float GetScore()
+    {
+        return Score;
+    }
+
     public void PlusScore(int score = 1)
     {
         ModifySocre(Score + score);
@@ -42,8 +58,12 @@ public class GameManager : MonoBehaviour
         OnChangedScore.Invoke(Score);
     }
 
-    public float GetScore()
+#endregion
+
+    public void OnGaemOver()
     {
-        return Score;
+        _gameOverPanel.gameObject.SetActive(true);
+        _gameOverPanel.DOFade(0.75f, 1f).SetEase(Ease.InSine);
+        //_gameOverUI.
     }
 }

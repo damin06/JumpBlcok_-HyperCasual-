@@ -87,10 +87,12 @@ public class BlockManager : MonoBehaviour
             if(m_curDir == BlockDir.Right)
             {
                 curPos.x += (m_currentBlock.transform.localScale.x / 2) + (newSize.x / 2) + Random.Range(m_minDistance, m_maxDistance);
+                curPos.z = GameObject.Find("Player").GetComponent<AgentController>().transform.position.z;
             }
             else
             {
                 curPos.z += (m_currentBlock.transform.localScale.z / 2) + (newSize.z / 2) + Random.Range(m_minDistance, m_maxDistance);
+                curPos.x = GameObject.Find("Player").GetComponent<AgentController>().transform.position.x;
             }
             newPos = curPos;
         }

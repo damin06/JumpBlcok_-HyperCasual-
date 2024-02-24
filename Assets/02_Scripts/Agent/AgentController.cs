@@ -148,6 +148,14 @@ public class AgentController : MonoBehaviour
 
         return F;
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Fog"))
+        {
+            //transform.setfa
+        }
+    }
 }
 
 [CustomEditor(typeof(AgentController)), CanEditMultipleObjects]

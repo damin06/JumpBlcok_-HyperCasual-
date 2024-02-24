@@ -48,7 +48,13 @@ public abstract class BlockMono : PoolableMono
             return;
 
         m_IsTouched = true;
-        Debug.Log(transform.InverseTransformPoint(collision.transform.position));
+        Vector3 playerPos = transform.InverseTransformPoint(collision.transform.position);
+        Debug.Log(playerPos);
+
+        if(Mathf.Abs(playerPos.x)  > 0.5 || Mathf.Abs(playerPos.z) > 0.5)
+        {
+            GameObject.Find("Player").GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotationY;
+        }
 
         BlockManager.Instance.SapwnNextBlock();
         GameManager.Instance.PlusScore();
