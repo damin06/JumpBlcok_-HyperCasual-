@@ -56,6 +56,7 @@ public abstract class BlockMono : PoolableMono
             GameObject.Find("Player").GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotationY;
         }
 
+        GameObject.Find("Fog").transform.position = transform.position;
         BlockManager.Instance.SapwnNextBlock();
         GameManager.Instance.PlusScore();
     }

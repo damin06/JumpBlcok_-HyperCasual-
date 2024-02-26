@@ -9,7 +9,7 @@ using System;
 [RequireComponent(typeof(Rigidbody))]
 public class AgentController : MonoBehaviour
 {
-    [Header("Baizer Test")]
+    [Header("Baizer Pivot")]
     public Vector3 P1;
     public Vector3 P2;
     public Vector3 P3;
@@ -43,6 +43,11 @@ public class AgentController : MonoBehaviour
         m_rb = GetComponent<Rigidbody>();
     }
 
+    private void Start()
+    {
+        JumpPower = m_minJumpPower;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -67,8 +72,9 @@ public class AgentController : MonoBehaviour
                 if (touch.phase == TouchPhase.Ended)
                 {
                     Vector3 dir = BlockManager.Instance.m_curDir == BlockDir.Right ? Vector3.right : Vector3.forward;
-                    JumpRb(dir, JumpPower);
-                    JumpPower = 0;
+                    StartCoroutine(JumpBazier(dir, JumpPower));
+                    //JumpRb(dir, JumpPower);
+                    JumpPower = m_minJumpPower;
                 }
             }
         }
@@ -149,11 +155,11 @@ public class AgentController : MonoBehaviour
         return F;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Fog"))
         {
-            //transform.setfa
+            UIManager.Instance.OnGameOverSeq();
         }
     }
 }

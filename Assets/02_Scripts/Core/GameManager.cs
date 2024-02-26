@@ -17,11 +17,6 @@ public class GameManager : MonoBehaviour
     [Header("Pool")]
     [SerializeField] private PollingListSO _poolingList;
 
-    [Space]
-
-    [Header("Reference")]
-    [SerializeField] private Image _gameOverPanel;
-
     private void Awake()
     {
         if (Instance != null)
@@ -42,7 +37,7 @@ public class GameManager : MonoBehaviour
 
 #region Score
 
-    public float GetScore()
+    public int GetScore()
     {
         return Score;
     }
@@ -59,11 +54,4 @@ public class GameManager : MonoBehaviour
     }
 
 #endregion
-
-    public void OnGaemOver()
-    {
-        _gameOverPanel.gameObject.SetActive(true);
-        _gameOverPanel.DOFade(0.75f, 1f).SetEase(Ease.InSine);
-        //_gameOverUI.
-    }
 }
