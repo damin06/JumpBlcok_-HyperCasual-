@@ -36,8 +36,6 @@ public class AgentController : MonoBehaviour
         set { m_jumpPower = Mathf.Clamp(value, 0.1f, m_maxJumpPower); }
     }
 
-
-
     private void Awake()
     {
         m_rb = GetComponent<Rigidbody>();
@@ -155,11 +153,21 @@ public class AgentController : MonoBehaviour
         return F;
     }
 
+    public void ReSpawnPlayer()
+    {
+        transform.position = new Vector3(0, 20, 0);
+        transform.rotation = new Quaternion(0, 0, 0, 0);
+        m_rb.constraints = RigidbodyConstraints.FreezeRotation;
+
+        gameObject.SetActive(false);
+    }
+
     private void OnTriggerEnter(Collider collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Fog"))
         {
             UIManager.Instance.OnGameOverSeq();
+            GameManager.Instance.GameState = GameState.End;
         }
     }
 }

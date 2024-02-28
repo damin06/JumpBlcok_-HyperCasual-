@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
+
     [Header("Reference")]
     [SerializeField] private TextMeshProUGUI m_socreTXT;
     [SerializeField] private Image m_gameOverPanel;
@@ -29,25 +30,38 @@ public class UIManager : MonoBehaviour
 
     public void OnGameOverSeq()
     {
-        Debug.Log("GameOver");
-
-        m_gameOverPanel.gameObject.SetActive(true);
-        m_gameOverPanel.DOFade(0.7f, 0.75f).SetEase(Ease.InSine);
-        m_gameOverScore.DOFade(1f, 0.9f).SetEase(Ease.InSine);
-        Sequence gameOVerSequence = DOTween.Sequence();
+        Sequence gameOverSequence = DOTween.Sequence();
 
         int score = GameManager.Instance.GetScore();
         m_gameOverScore.text = score.ToString();
 
-        StartCoroutine(Count(score, 0));
-        gameOVerSequence
-            .Append(m_gameOverPanel.DOFade(0.7f, 0.75f).SetEase(Ease.InSine))
-            .Insert(0.5f, m_gameOverScore.DOFade(1f, 0.75f).SetEase(Ease.InSine));
-            //.onStepComplete(() =>
-            //{
-            //    gameObject.SetActive(true);
-            //});
+        gameOverSequence.OnStart(() =>
+        {
+            m_gameOverPanel.gameObject.SetActive(true);
+            m_gameOverPanel.DOFade(0, 0);
+            m_gameOverScore.DOFade(0, 0);
+        })
+        .Append(m_gameOverPanel.DOFade(0.7f, 0.75f).SetEase(Ease.InSine))
+        .Insert(0.5f, m_gameOverScore.DOFade(1f, 0.75f).SetEase(Ease.InSine))
+        .OnStepComplete(() => 
+        {
+            StartCoroutine(Count(score, 0));
+        });
     }
+
+    public void OnGameRestartSeq()
+    {
+        Sequence gameRestartSequence = DOTween.Sequence();
+
+        gameRestartSequence
+            .Append(m_gameOverScore.DOFade(0, 0.5f).SetEase(Ease.InSine))
+            .Insert(0.5f, m_gameOverPanel.DOFade(0, 0.4f).SetEase(Ease.InSine))
+            .OnStepComplete(() =>
+            {
+                m_gameOverPanel.gameObject.SetActive(false);
+            });
+    }
+
 
     IEnumerator Count(float target, float current)
     {

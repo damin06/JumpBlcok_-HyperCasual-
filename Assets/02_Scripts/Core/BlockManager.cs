@@ -38,7 +38,7 @@ public class BlockManager : MonoBehaviour
         else
             Destroy(this);
 
-        SpanwBlock(Vector3.zero, BlockType.Normal);
+        SpanwBlockWithPos(Vector3.zero, BlockType.Normal);
     }
 
     private void SpanwBlock(Vector3 pos = default, BlockType blockType = BlockType.Normal)
@@ -98,6 +98,7 @@ public class BlockManager : MonoBehaviour
         }
 #endregion
 
+#region Camera
 
         if (m_currentBlock != null)
         {
@@ -107,17 +108,21 @@ public class BlockManager : MonoBehaviour
             m_cam.transform.position = campPos;
 
             if (m_curDir == BlockDir.Right)
-                PlayerPrefs.SetFloat("distance", newPos.x - curPos.x);
+                PlayerPrefs.SetFloat("distance", newPos.x - curPos.x); //Dev Mode
             else
                 PlayerPrefs.SetFloat("distance", newPos.z - curPos.z);
         }
         else
         {
+            m_cam.transform.position = new Vector3(newPos.x, 6, newPos.z);
+
             if (m_curDir == BlockDir.Right)
                 PlayerPrefs.SetFloat("distance", newPos.x);
             else
                 PlayerPrefs.SetFloat("distance", newPos.z);
         }
+
+#endregion
 
         m_currentBlock = PoolManager.Instance.Pop(blockName) as BlockMono;
 
@@ -126,9 +131,26 @@ public class BlockManager : MonoBehaviour
         m_blocks.Enqueue(m_currentBlock);
     }
 
-    public void SapwnNextBlock()
+    public void SapwnNextBlock(BlockType blockType = BlockType.Normal)
     {
         m_curDir = (BlockDir)Random.Range(0, 2);
         SpanwBlock();
+    }
+
+    public void SpanwBlockWithPos(Vector3 pos, BlockType blockType = BlockType.Normal)
+    {
+        SpanwBlock(pos, blockType);
+    }
+
+    public void ClearBlock()
+    {
+        while(m_blocks.Count > 0)
+        {
+            BlockMono block = m_blocks.Dequeue();
+            block.HideBlock();
+        }
+
+        m_curDir = BlockDir.Right;
+        m_currentBlock = null;
     }
 }
