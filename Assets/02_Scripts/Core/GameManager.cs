@@ -43,6 +43,8 @@ public class GameManager : MonoBehaviour
         //_color = Random.ColorHSV(0, 1,0.8f, 1, 0.8f, 1);
         _color = Color.white;
         m_skyMat.color = _color;
+
+        UIManager.Instance.ShoeHomeUI();
     }
 
     private void Update()
@@ -73,6 +75,8 @@ public class GameManager : MonoBehaviour
 
     private void GameStart()
     {
+        UIManager.Instance.HideHomeUI();
+
         GameState = GameState.InGame;
         _agent.gameObject.SetActive(true);
     }

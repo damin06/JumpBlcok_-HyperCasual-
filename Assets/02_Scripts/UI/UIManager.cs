@@ -10,9 +10,17 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
 
     [Header("Reference")]
+
+    [Header("InGame")]
     [SerializeField] private TextMeshProUGUI m_socreTXT;
+
+    [Header("GameOver")]
     [SerializeField] private Image m_gameOverPanel;
     [SerializeField] private TextMeshProUGUI m_gameOverScore;
+
+    [Header("Home")]
+    [SerializeField] private TextMeshProUGUI m_titleTXT;
+    [SerializeField] protected TextMeshProUGUI m_tapeMessageTXT;
 
     private void Awake()
     {
@@ -77,5 +85,38 @@ public class UIManager : MonoBehaviour
 
         current = target;
         m_gameOverScore.text = ((int)current).ToString();
+    }
+
+    public void ShoeHomeUI()
+    {
+        m_titleTXT.gameObject.SetActive(true);
+        m_tapeMessageTXT.gameObject.SetActive(true);
+
+        m_titleTXT.DOFade(1, 0.5f).SetEase(Ease.InSine);
+        StartCoroutine(TapMessage());
+    }
+
+    float FadeTime = 0.8f;
+    private IEnumerator TapMessage()
+    {
+        m_tapeMessageTXT.DOFade(1, FadeTime).SetEase(Ease.InSine);
+        yield return new WaitForSeconds(FadeTime);
+        m_tapeMessageTXT.DOFade(0, FadeTime).SetEase(Ease.InSine);
+        yield return new WaitForSeconds(FadeTime);
+        StartCoroutine(TapMessage());
+    }
+
+    public void HideHomeUI()
+    {
+        m_titleTXT.DOFade(0, 0.5f).SetEase(Ease.InSine)
+            .OnComplete(()=>{
+            m_titleTXT.gameObject.SetActive(false);
+        });
+
+        StopAllCoroutines();
+        m_tapeMessageTXT.DOFade(0, 0.5f).SetEase(Ease.InSine)
+            .OnComplete(() => {
+                m_tapeMessageTXT.gameObject.SetActive(false);
+            });
     }
 }

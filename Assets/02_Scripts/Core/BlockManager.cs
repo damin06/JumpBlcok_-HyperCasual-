@@ -114,7 +114,11 @@ public class BlockManager : MonoBehaviour
         }
         else
         {
-            m_cam.transform.position = new Vector3(newPos.x, 6, newPos.z);
+            if(GameManager.Instance.GameState == GameState.Home)
+                m_cam.transform.position = new Vector3(-4, 6, 0);
+            else
+                m_cam.transform.position = new Vector3(newPos.x, 6, newPos.z);
+
 
             if (m_curDir == BlockDir.Right)
                 PlayerPrefs.SetFloat("distance", newPos.x);
