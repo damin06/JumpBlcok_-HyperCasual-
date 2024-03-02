@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System;
 
+[RequireComponent(typeof(AudioPlayer))]
 [RequireComponent(typeof(Rigidbody))]
 public class AgentController : MonoBehaviour
 {
@@ -23,12 +24,14 @@ public class AgentController : MonoBehaviour
     [SerializeField] private float m_minJumpPower = 3f;
     [SerializeField] private float m_maxJumpPower = 5f;
     [SerializeField] private AnimationCurve m_animationCurve;
-    [SerializeField] private bool m_DevMode =false;
+    [SerializeField] private bool m_DevMode = false;
 
 
-    private bool isGround => m_rb.velocity.magnitude <= 0;
-    private Rigidbody m_rb;
+    private bool isGround;
     private float m_jumpPower;
+
+    private Rigidbody m_rb;
+    private AudioPlayer _audio;
 
     public float JumpPower
     {
@@ -39,6 +42,7 @@ public class AgentController : MonoBehaviour
     private void Awake()
     {
         m_rb = GetComponent<Rigidbody>();
+        _audio = GetComponent<AudioPlayer>();
     }
 
     private void Start()
@@ -54,7 +58,7 @@ public class AgentController : MonoBehaviour
 
     private void AgentInput()
     {
-        if (!isGround)
+        if (!isGround || m_rb.velocity.magnitude > 0)
             return;
 
         if(Application.platform == RuntimePlatform.Android)
@@ -65,20 +69,31 @@ public class AgentController : MonoBehaviour
                 if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
                     return;
 
+                if(touch.phase == TouchPhase.Began)
+                {
+                    _audio.PlayerClipWithVariablePitch("Increase", (m_maxJumpPower - m_minJumpPower) / m_jumpInputAccel);
+                }
+
                 JumpPower += Time.deltaTime * m_jumpInputAccel;
+
 
                 if (touch.phase == TouchPhase.Ended)
                 {
                     Vector3 dir = BlockManager.Instance.m_curDir == BlockDir.Right ? Vector3.right : Vector3.forward;
                     StartCoroutine(JumpBazier(dir, JumpPower));
                     //JumpRb(dir, JumpPower);
+                    _audio.StopAudio();
                     JumpPower = m_minJumpPower;
                 }
             }
         }
         else
         {
-            if(Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject()) 
+            if(Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+            {
+                _audio.PlayerClipWithVariablePitch("Increase", (m_maxJumpPower - m_minJumpPower) / m_jumpInputAccel);
+            }
+            else if(Input.GetMouseButton(0)) 
             {
                 JumpPower += Time.deltaTime * m_jumpInputAccel;
             }
@@ -86,12 +101,14 @@ public class AgentController : MonoBehaviour
             {
                 Debug.Log($"jumpePower : {JumpPower}");
                 Vector3 dir = BlockManager.Instance.m_curDir == BlockDir.Right ? Vector3.right : Vector3.forward;
+                _audio.StopAudio();
                 //JumpRb(dir, JumpPower);
                 if (m_DevMode)
                 {
                     StartCoroutine(JumpBazier(dir, PlayerPrefs.GetFloat("distance")));
                     return;
                 }
+
                 StartCoroutine(JumpBazier(dir, JumpPower));
                 JumpPower = m_minJumpPower;
             }
@@ -114,6 +131,8 @@ public class AgentController : MonoBehaviour
 
     private IEnumerator JumpBazier(Vector3 dir, float distance)
     {
+        isGround = false;
+
         float time = 0f;
         float value = 0f;
         float curve = 5f;
@@ -162,10 +181,20 @@ public class AgentController : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Block"))
+        {
+            isGround = true;
+            _audio.PlayerClipWithVariablePitch("landing");
+        }
+    }
+
     private void OnTriggerEnter(Collider collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Fog"))
         {
+            _audio.SimplePlay("Fog");
             UIManager.Instance.OnGameOverSeq();
             GameManager.Instance.GameState = GameState.End;
         }

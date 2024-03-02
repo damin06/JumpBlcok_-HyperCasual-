@@ -41,7 +41,7 @@ public class UIManager : MonoBehaviour
         Sequence gameOverSequence = DOTween.Sequence();
 
         int score = GameManager.Instance.GetScore();
-        m_gameOverScore.text = score.ToString();
+        //m_gameOverScore.text = score.ToString();
 
         gameOverSequence.OnStart(() =>
         {
