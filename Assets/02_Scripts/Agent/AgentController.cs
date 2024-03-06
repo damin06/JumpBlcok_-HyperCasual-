@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine.EventSystems;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System;
+using DG.Tweening;
 
 [RequireComponent(typeof(AudioPlayer))]
 [RequireComponent(typeof(Rigidbody))]
@@ -53,15 +54,30 @@ public class AgentController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Physics.Raycast(transform.localPosition, -transform.up, out RaycastHit hit, 1.2f))
+        {
+            if(hit.collider.gameObject.layer == LayerMask.NameToLayer("Block"))
+                isGround = true;
+            else
+                isGround = false;
+        }
+        else
+        {
+            isGround = false;
+        }
+       
+        Debug.DrawRay(transform.localPosition, -transform.up * 1.2f, Color.red);
+        Debug.Log($"CurVelocity : {m_rb.velocity.magnitude}");
         AgentInput();
     }
 
     private void AgentInput()
     {
-        if (!isGround || m_rb.velocity.magnitude > 0)
+        if (!isGround || transform.rotation != new Quaternion(0,0,0,1))
             return;
 
-        if(Application.platform == RuntimePlatform.Android)
+        //!isGround ||
+        if (Application.platform == RuntimePlatform.Android)
         {
             if (Input.touchCount > 0)
             {
@@ -96,9 +112,12 @@ public class AgentController : MonoBehaviour
             else if(Input.GetMouseButton(0)) 
             {
                 JumpPower += Time.deltaTime * m_jumpInputAccel;
+                transform.localScale = new Vector3(1, Mathf.Clamp( 1 - (JumpPower / (m_maxJumpPower - m_minJumpPower) / 2), 0.5f, 1), 1);
             }
             else if (Input.GetMouseButtonUp(0))
             {
+                //transform.localScale = Vector3.one;
+                transform.DOScaleY(1, 0.2f).SetEase(Ease.InOutBack);
                 Debug.Log($"jumpePower : {JumpPower}");
                 Vector3 dir = BlockManager.Instance.m_curDir == BlockDir.Right ? Vector3.right : Vector3.forward;
                 _audio.StopAudio();
@@ -131,7 +150,7 @@ public class AgentController : MonoBehaviour
 
     private IEnumerator JumpBazier(Vector3 dir, float distance)
     {
-        isGround = false;
+        //isGround = false;
 
         float time = 0f;
         float value = 0f;
@@ -185,7 +204,7 @@ public class AgentController : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Block"))
         {
-            isGround = true;
+            //isGround = true;
             _audio.PlayerClipWithVariablePitch("landing");
         }
     }

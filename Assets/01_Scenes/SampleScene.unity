@@ -1673,7 +1673,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 9cd53ec53b85921449728daac3eb5961, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1737,7 +1737,7 @@ MonoBehaviour:
   m_jumpInputAccel: 8
   m_jumpSpeed: 2
   m_minJumpPower: 3
-  m_maxJumpPower: 12
+  m_maxJumpPower: 13
   m_animationCurve:
     serializedVersion: 2
     m_Curve:
