@@ -202,10 +202,11 @@ public class AgentController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Block"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Block") && collision.gameObject.TryGetComponent<BlockMono>(out BlockMono _block))
         {
             //isGround = true;
-            _audio.PlayerClipWithVariablePitch("landing");
+            if(!_block.IsTouched)
+                _audio.PlayerClipWithVariablePitch("landing");
         }
     }
 

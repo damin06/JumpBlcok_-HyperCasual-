@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public abstract class BlockMono : PoolableMono
 {
-    private bool m_IsTouched = false;
+    public bool IsTouched { private set; get; } = false;
 
     private void OnEnable()
     {
@@ -14,7 +14,7 @@ public abstract class BlockMono : PoolableMono
 
     public override void Reset() 
     {
-        m_IsTouched = false;
+        IsTouched = false;
     }
 
     public void SetBlockPosAndScale(Vector3 pos, Vector3 scale)
@@ -44,10 +44,10 @@ public abstract class BlockMono : PoolableMono
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(m_IsTouched) 
+        if(IsTouched) 
             return;
 
-        m_IsTouched = true;
+        IsTouched = true;
         Vector3 playerPos = transform.InverseTransformPoint(collision.transform.position);
         Debug.Log(playerPos);
 
