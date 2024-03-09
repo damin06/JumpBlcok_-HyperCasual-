@@ -71,8 +71,27 @@ public class BlockManager : MonoBehaviour
 #region Size
         if (m_currentBlock != null)
         {
-            float maxSize = Mathf.Clamp(3.65f - (GameManager.Instance.GetScore() / 120),1f, 3.65f);
-            float minSize = Mathf.Clamp(3.65f - (GameManager.Instance.GetScore() / 70),1f, 3.65f);
+            int rand = Random.Range(0, 26);
+
+            float maxSize;
+            float minSize;
+
+            if (rand < (int)(GameManager.Instance.GetScore() / 20) + 1)
+            {
+                maxSize = Mathf.Clamp(2f, 1f, 3.65f);
+                minSize = Mathf.Clamp(1.5f, 1f, 3.65f);
+            }
+            else if(rand < (int)(GameManager.Instance.GetScore() / 15) + 3)
+            {
+                maxSize = Mathf.Clamp(3f,1f, 3.65f);
+                minSize = Mathf.Clamp(2.5f, 1f, 3.65f);
+            }
+            else
+            {
+                maxSize = Mathf.Clamp(3.65f,1f, 3.65f);
+                minSize = Mathf.Clamp(3f,1f, 3.65f);
+            }
+
 
             float totalSize = Random.Range(minSize, maxSize);
             newSize = new Vector3(totalSize, 16f, totalSize);
