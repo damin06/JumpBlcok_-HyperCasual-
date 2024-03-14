@@ -221,29 +221,29 @@ public class AgentController : MonoBehaviour
     }
 }
 
-[CustomEditor(typeof(AgentController)), CanEditMultipleObjects]
-public class Agent_Editor : Editor
-{
-    private void OnSceneGUI()
-    {
-        AgentController controller = (AgentController)target;
+//[CustomEditor(typeof(AgentController)), CanEditMultipleObjects]
+//public class Agent_Editor : Editor
+//{
+//    private void OnSceneGUI()
+//    {
+//        AgentController controller = (AgentController)target;
 
-        controller.P1 = Handles.PositionHandle(controller.P1, Quaternion.identity);
-        controller.P2 = Handles.PositionHandle(controller.P2, Quaternion.identity);
-        controller.P3 = Handles.PositionHandle(controller.P3, Quaternion.identity);
-        controller.P4 = Handles.PositionHandle(controller.P4, Quaternion.identity);
+//        controller.P1 = Handles.PositionHandle(controller.P1, Quaternion.identity);
+//        controller.P2 = Handles.PositionHandle(controller.P2, Quaternion.identity);
+//        controller.P3 = Handles.PositionHandle(controller.P3, Quaternion.identity);
+//        controller.P4 = Handles.PositionHandle(controller.P4, Quaternion.identity);
 
-        Handles.DrawLine(controller.P1, controller.P2);
-        Handles.DrawLine(controller.P3, controller.P4);
+//        Handles.DrawLine(controller.P1, controller.P2);
+//        Handles.DrawLine(controller.P3, controller.P4);
 
-        for(float i = 0; i < 100; i++)
-        {
-            float _beforeValue = i / 10;
-            Vector3 Before = controller.BazierCurve(controller.P1, controller.P2, controller.P3, controller.P4, _beforeValue);
-            float _AfterValue = (i + 1) / 10;
-            Vector3 After = controller.BazierCurve(controller.P1, controller.P2, controller.P3, controller.P4, _AfterValue);
+//        for(float i = 0; i < 100; i++)
+//        {
+//            float _beforeValue = i / 10;
+//            Vector3 Before = controller.BazierCurve(controller.P1, controller.P2, controller.P3, controller.P4, _beforeValue);
+//            float _AfterValue = (i + 1) / 10;
+//            Vector3 After = controller.BazierCurve(controller.P1, controller.P2, controller.P3, controller.P4, _AfterValue);
 
-            Handles.DrawLine(Before, After);
-        }
-    }
-}
+//            Handles.DrawLine(Before, After);
+//        }
+//    }
+//}
