@@ -29,6 +29,7 @@ public class BlockManager : MonoBehaviour
 
     [Header("Reference")]
     [SerializeField] private Transform m_cam;
+    [SerializeField] private Transform m_fog;
 
 
     private void Awake()
@@ -71,7 +72,7 @@ public class BlockManager : MonoBehaviour
 #region Size
         if (m_currentBlock != null)
         {
-            int rand = Random.Range(0, 26);
+            int rand = Random.Range(0, 20);
 
             float maxSize;
             float minSize;
@@ -150,6 +151,7 @@ public class BlockManager : MonoBehaviour
         m_currentBlock = PoolManager.Instance.Pop(blockName) as BlockMono;
 
         m_currentBlock.SetBlockPosAndScale(newPos, newSize);
+        m_fog.position = newPos;
 
         m_blocks.Enqueue(m_currentBlock);
     }

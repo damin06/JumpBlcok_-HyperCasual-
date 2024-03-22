@@ -7,6 +7,14 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System;
 using DG.Tweening;
 
+
+enum InputState
+{
+    None,
+    Began,
+    Ing
+}
+
 [RequireComponent(typeof(AudioPlayer))]
 [RequireComponent(typeof(Rigidbody))]
 public class AgentController : MonoBehaviour
@@ -29,7 +37,9 @@ public class AgentController : MonoBehaviour
 
 
     private bool isGround;
+    private bool isJump = false;
     private float m_jumpPower;
+    private InputState m_State = InputState.None;
 
     private Rigidbody m_rb;
     private AudioPlayer _audio;
@@ -67,14 +77,17 @@ public class AgentController : MonoBehaviour
         }
        
         Debug.DrawRay(transform.localPosition, -transform.up * 1.2f, Color.red);
-        Debug.Log($"CurVelocity : {m_rb.velocity.magnitude}");
+        //Debug.Log($"CurVelocity : {m_rb.velocity.magnitude}");
         AgentInput();
     }
 
     private void AgentInput()
     {
-        if (!isGround || transform.rotation != new Quaternion(0,0,0,1))
+        if (!isGround || transform.rotation != new Quaternion(0,0,0,1) || isJump)
+        {
+            JumpPower = m_minJumpPower;
             return;
+        }
 
         //!isGround ||
         if (Application.platform == RuntimePlatform.Android)
@@ -85,43 +98,55 @@ public class AgentController : MonoBehaviour
                 if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
                     return;
 
-                if(touch.phase == TouchPhase.Began)
+                if (touch.phase == TouchPhase.Began && m_State == InputState.None)
                 {
+                    //_audio.StopAudio();
                     _audio.PlayerClipWithVariablePitch("Increase", (m_maxJumpPower - m_minJumpPower) / m_jumpInputAccel);
+                    m_State = InputState.Began;
                 }
 
-                JumpPower += Time.deltaTime * m_jumpInputAccel;
+                if (m_State == InputState.Began || m_State == InputState.Ing)
+                {
+                    JumpPower += Time.deltaTime * m_jumpInputAccel;
+                    m_State = InputState.Ing;
+                }
 
 
-                if (touch.phase == TouchPhase.Ended)
+                if (touch.phase == TouchPhase.Ended && m_State == InputState.Ing)
                 {
                     Vector3 dir = BlockManager.Instance.m_curDir == BlockDir.Right ? Vector3.right : Vector3.forward;
                     StartCoroutine(JumpBazier(dir, JumpPower));
+                    transform.DOScaleY(1, 0.2f).SetEase(Ease.OutQuint);
                     //JumpRb(dir, JumpPower);
                     _audio.StopAudio();
                     JumpPower = m_minJumpPower;
+                    m_State = InputState.None;
                 }
             }
         }
         else
         {
-            if(Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+            if(Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && m_State == InputState.None)
             {
                 _audio.PlayerClipWithVariablePitch("Increase", (m_maxJumpPower - m_minJumpPower) / m_jumpInputAccel);
+                m_State = InputState.Began;
             }
-            else if(Input.GetMouseButton(0)) 
+            else if(Input.GetMouseButton(0) && (m_State == InputState.Began || m_State == InputState.Ing)) 
             {
                 JumpPower += Time.deltaTime * m_jumpInputAccel;
                 transform.localScale = new Vector3(1, Mathf.Clamp( 1 - (JumpPower / (m_maxJumpPower - m_minJumpPower) / 2), 0.5f, 1), 1);
+                m_State = InputState.Ing;
             }
-            else if (Input.GetMouseButtonUp(0))
+            else if (Input.GetMouseButtonUp(0) && m_State == InputState.Ing)
             {
                 //transform.localScale = Vector3.one;
-                transform.DOScaleY(1, 0.2f).SetEase(Ease.InOutBack);
+                transform.DOScaleY(1, 0.2f).SetEase(Ease.OutQuint);
                 Debug.Log($"jumpePower : {JumpPower}");
                 Vector3 dir = BlockManager.Instance.m_curDir == BlockDir.Right ? Vector3.right : Vector3.forward;
                 _audio.StopAudio();
                 //JumpRb(dir, JumpPower);
+                m_State = InputState.None;
+
                 if (m_DevMode)
                 {
                     StartCoroutine(JumpBazier(dir, PlayerPrefs.GetFloat("distance")));
@@ -150,7 +175,12 @@ public class AgentController : MonoBehaviour
 
     private IEnumerator JumpBazier(Vector3 dir, float distance)
     {
+        JumpPower = m_minJumpPower;
         //isGround = false;
+        if (!isGround)
+            yield return null;
+
+        isJump = true;
 
         float time = 0f;
         float value = 0f;
@@ -171,6 +201,8 @@ public class AgentController : MonoBehaviour
             //Debug.Log(value);
             yield return null;
         }
+
+        isJump = false;
         //Debug.Log("break");
     }
 
@@ -196,18 +228,19 @@ public class AgentController : MonoBehaviour
         transform.position = new Vector3(0, 20, 0);
         transform.rotation = new Quaternion(0, 0, 0, 0);
         m_rb.constraints = RigidbodyConstraints.FreezeRotation;
+        m_rb.velocity = Vector3.zero;
 
         gameObject.SetActive(false);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Block") && collision.gameObject.TryGetComponent<BlockMono>(out BlockMono _block))
-        {
-            //isGround = true;
-            if(!_block.IsTouched)
-                _audio.PlayerClipWithVariablePitch("landing");
-        }
+        //if (collision.gameObject.layer == LayerMask.NameToLayer("Block") && collision.gameObject.TryGetComponent<BlockMono>(out BlockMono _block))
+        //{
+        //    //isGround = true;
+        //    if(!_block.IsTouched)
+        //        _audio.PlayerClipWithVariablePitch("landing");
+        //}
     }
 
     private void OnTriggerEnter(Collider collision)
@@ -221,29 +254,29 @@ public class AgentController : MonoBehaviour
     }
 }
 
-//[CustomEditor(typeof(AgentController)), CanEditMultipleObjects]
-//public class Agent_Editor : Editor
-//{
-//    private void OnSceneGUI()
-//    {
-//        AgentController controller = (AgentController)target;
+[CustomEditor(typeof(AgentController)), CanEditMultipleObjects]
+public class Agent_Editor : Editor
+{
+    private void OnSceneGUI()
+    {
+        AgentController controller = (AgentController)target;
 
-//        controller.P1 = Handles.PositionHandle(controller.P1, Quaternion.identity);
-//        controller.P2 = Handles.PositionHandle(controller.P2, Quaternion.identity);
-//        controller.P3 = Handles.PositionHandle(controller.P3, Quaternion.identity);
-//        controller.P4 = Handles.PositionHandle(controller.P4, Quaternion.identity);
+        controller.P1 = Handles.PositionHandle(controller.P1, Quaternion.identity);
+        controller.P2 = Handles.PositionHandle(controller.P2, Quaternion.identity);
+        controller.P3 = Handles.PositionHandle(controller.P3, Quaternion.identity);
+        controller.P4 = Handles.PositionHandle(controller.P4, Quaternion.identity);
 
-//        Handles.DrawLine(controller.P1, controller.P2);
-//        Handles.DrawLine(controller.P3, controller.P4);
+        Handles.DrawLine(controller.P1, controller.P2);
+        Handles.DrawLine(controller.P3, controller.P4);
 
-//        for(float i = 0; i < 100; i++)
-//        {
-//            float _beforeValue = i / 10;
-//            Vector3 Before = controller.BazierCurve(controller.P1, controller.P2, controller.P3, controller.P4, _beforeValue);
-//            float _AfterValue = (i + 1) / 10;
-//            Vector3 After = controller.BazierCurve(controller.P1, controller.P2, controller.P3, controller.P4, _AfterValue);
+        for (float i = 0; i < 100; i++)
+        {
+            float _beforeValue = i / 10;
+            Vector3 Before = controller.BazierCurve(controller.P1, controller.P2, controller.P3, controller.P4, _beforeValue);
+            float _AfterValue = (i + 1) / 10;
+            Vector3 After = controller.BazierCurve(controller.P1, controller.P2, controller.P3, controller.P4, _AfterValue);
 
-//            Handles.DrawLine(Before, After);
-//        }
-//    }
-//}
+            Handles.DrawLine(Before, After);
+        }
+    }
+}

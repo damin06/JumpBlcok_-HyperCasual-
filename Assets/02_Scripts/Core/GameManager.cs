@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour
         m_skyMat.color = _color;
 
         UIManager.Instance.ShoeHomeUI();
+        AdmobManager.Instance.ShowBannerAd();
     }
 
     private void Update()
@@ -90,13 +91,15 @@ public class GameManager : MonoBehaviour
 
     private void SetRandomColor()
     {
-        _color = Random.ColorHSV(0, 1,0.8f, 1, 0.8f, 1);
+        _color = Random.ColorHSV(0, 1f, 1f, 1f, 0.5f, 1f);
         m_skyMat.DOColor(_color, 1);
     }
 
     public void ReSpawn()
     {
         UIManager.Instance.OnGameRestartSeq();
+
+        AdmobManager.Instance.ShowBannerAd();
 
         ModifySocre(0);
 

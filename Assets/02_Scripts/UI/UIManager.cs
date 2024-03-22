@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour
     [Header("GameOver")]
     [SerializeField] private Image m_gameOverPanel;
     [SerializeField] private TextMeshProUGUI m_gameOverScore;
+    [SerializeField] private Button m_gameOverButton;
 
     [Header("Home")]
     [SerializeField] private TextMeshProUGUI m_titleTXT;
@@ -38,6 +39,8 @@ public class UIManager : MonoBehaviour
 
     public void OnGameOverSeq()
     {
+        AdmobManager.Instance.ShowInterstitialAd();
+
         Sequence gameOverSequence = DOTween.Sequence();
 
         int score = GameManager.Instance.GetScore();
@@ -73,7 +76,7 @@ public class UIManager : MonoBehaviour
 
     IEnumerator Count(float target, float current)
     {
-        float duration = 0.6f; 
+        float duration = 0.4f; 
         float offset = (target - current) / duration;
 
         while (current < target)
@@ -85,6 +88,8 @@ public class UIManager : MonoBehaviour
 
         current = target;
         m_gameOverScore.text = ((int)current).ToString();
+
+        m_gameOverButton.gameObject.SetActive(true);
     }
 
     public void ShoeHomeUI()

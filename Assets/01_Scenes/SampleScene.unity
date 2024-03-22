@@ -828,7 +828,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &977120360
 RectTransform:
   m_ObjectHideFlags: 0
@@ -915,6 +915,18 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 0
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 977120359}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &977120362
@@ -1147,6 +1159,7 @@ MonoBehaviour:
   m_socreTXT: {fileID: 1996831575}
   m_gameOverPanel: {fileID: 538464564}
   m_gameOverScore: {fileID: 1464700393}
+  m_gameOverButton: {fileID: 977120361}
   m_titleTXT: {fileID: 614812925}
   m_tapeMessageTXT: {fileID: 5406018}
 --- !u!1 &1186020464
@@ -2103,7 +2116,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 1, z: 100}
+  m_LocalScale: {x: 10, y: 1, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -14374,6 +14387,61 @@ MonoBehaviour:
   m_maxDistance: 7
   m_blockCount: 2
   m_cam: {fileID: 1186020467}
+  m_fog: {fileID: 1773982574}
+--- !u!1 &1950112290
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1950112292}
+  - component: {fileID: 1950112291}
+  m_Layer: 0
+  m_Name: AdMobManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1950112291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1950112290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 552ca53941b777841b9bce4b4459870a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_adUnitId:
+    data:
+    - Key: 1
+      Value:
+        ID: ca-app-pub-5866814658384804/1127257482
+        TestID: ca-app-pub-3940256099942544/6300978111
+    - Key: 2
+      Value:
+        ID: ca-app-pub-5866814658384804/4161449082
+        TestID: ca-app-pub-3940256099942544/1033173712
+--- !u!4 &1950112292
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1950112290}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 720, y: 1480, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1965713243
 Mesh:
   m_ObjectHideFlags: 0
@@ -14691,3 +14759,4 @@ SceneRoots:
   - {fileID: 1773982574}
   - {fileID: 1073261787}
   - {fileID: 1552725525}
+  - {fileID: 1950112292}

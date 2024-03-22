@@ -59,5 +59,6 @@ public abstract class BlockMono : PoolableMono
         GameObject.Find("Fog").transform.position = transform.position;
         BlockManager.Instance.SapwnNextBlock();
         GameManager.Instance.AddScore();
+        GetComponent<AudioPlayer>().SimplePlay("landing");
     }
 }

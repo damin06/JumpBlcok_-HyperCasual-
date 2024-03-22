@@ -66,7 +66,6 @@ public class AudioPlayer : MonoBehaviour
     /// <param name="_pitch"></param>
     public void PlayerClipWithVariablePitch(string _name, float _pitch = default)
     {
-
         if (_pitch == default)
             _audioSource.pitch = _basePitch + Random.Range(-_pitchRandomness, _pitchRandomness);
         else
